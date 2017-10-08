@@ -6,8 +6,16 @@ html,body {
     background: white;
 }
 
+#controlPanel{
+    position: absolute;
+    z-index: 1;
+    left: 0px;
+    top: 0px;
+}
+    
 #imageContainer {
     position: absolute;
+    z-index: 0;
     left: 0px;
     top: 0px;
     width: 100vw;
