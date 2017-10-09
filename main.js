@@ -8,7 +8,7 @@ var ettan2017 = {
     imageScale: 1,                  // 画像表示倍率
     tapEnabled: false,              // iOSのSafariでd3のclickが来ないのでtouchend代用するためのもの
     userParam: {                    // ユーザパラメータ（Twitter認証時に取得）
-        uid: null,  // firebaseのuid
+        uid: null,  // firebaseのuid（認証されていなければnull）
         id: null,   // twitterユーザーID
         name: null, // twitter表示名
         icon: null  // twitterアイコン
@@ -228,6 +228,7 @@ var ettan2017 = {
             'lang': 'ja'
         });
         firebase.auth().signInWithPopup(provider).then(function(result) {
+            // サインイン成功・ユーザパラメータを設定
             this.userParam.id = result.additionalUserInfo.username;
             this.userParam.name = result.user.displayName;
             this.userParam.icon = result.user.photoURL;
@@ -257,6 +258,12 @@ var ettan2017 = {
     onLogout: function() {
         this.fadeOut();
         firebase.auth().signOut().then(function() {
+            // サインアウト成功・ユーザパラメータをクリア
+            this.userParam.id = null;
+            this.userParam.name = null;
+            this.userParam.icon = null;
+            this.userParam.uid = null;
+
             this.didLogout();
             this.fadeIn();
         }.bind(this)).catch(function(error) {
@@ -269,7 +276,6 @@ var ettan2017 = {
     didLogout: function() {
         document.getElementById("login").style.display = "inline";
         document.getElementById("logout").style.display = "none";
-        this.userParam.uid = null;
         document.getElementById("remove").style.display = "none";
 
         var icon = document.getElementById("icon")
