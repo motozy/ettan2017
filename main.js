@@ -42,6 +42,13 @@ var ettan2017 = {
             this.onLogout();
         }.bind(this));
         
+        // 削除ボタン
+        document.getElementById("remove").addEventListener('click', function (event) {
+            event.stopPropagation(); // 下にclickイベントが行かないように
+            this.tapEnabled = false;
+            this.onRemove();
+        }.bind(this));
+
         // リサイズ時処理
         window.addEventListener('resize', function (event) {
             this.onResize();
@@ -140,6 +147,17 @@ var ettan2017 = {
             });
         }
     },
+
+    // 削除
+    onRemove: function() {
+        if(this.userParam.uid){
+            // 既存のユーザー名とアイコンがあれば削除
+            this.removeUserTag(this.userParam.uid);
+
+            // firebaseのDBから削除
+            firebase.database().ref(this.dbRefPath + this.userParam.uid).set(null);
+        }
+    },
     
     // imageContainerに新しいユーザー名とアイコンを追加
     addUserTag: function(uid, icon, name, id, x, y){
@@ -227,7 +245,8 @@ var ettan2017 = {
     didLogin: function() {
         document.getElementById("login").style.display = "none";
         document.getElementById("logout").style.display = "inline";
-
+        document.getElementById("remove").style.display = "inline";
+        
         var icon = document.getElementById("icon")
         icon.src = this.userParam.icon;
         icon.hidden = false;
@@ -251,6 +270,7 @@ var ettan2017 = {
         document.getElementById("login").style.display = "inline";
         document.getElementById("logout").style.display = "none";
         this.userParam.uid = null;
+        document.getElementById("remove").style.display = "none";
 
         var icon = document.getElementById("icon")
         icon.src = "";
