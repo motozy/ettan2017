@@ -252,7 +252,8 @@ var ettan2017 = {
     fxxkinApple() {
         // ブラウザ自身でのピンチ・ドラッグ操作を禁止する
         document.addEventListener('touchstart', function (e){
-            if (e.target.nodeName !== "INPUT") {
+            // input と userIcon 以外を禁止
+            if (e.target.nodeName !== "INPUT" && e.target.className !== "userIcon") {
                 e.preventDefault();
             }
         }, true);
