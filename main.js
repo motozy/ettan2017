@@ -2,26 +2,28 @@
 "use strict";
 
 var ettan2017 = {
-    imageSize: window.innerWidth,
-    imageX: 0,
-    imageY: 0,
-    imageScale: 1,
-    tapEnabled: false, // iOSのSafariでd3のclickが来ないのでtouchend代用するためのもの
-    userParam: {
-        uid: null,
-        id: null,
-        name: null,
-        icon: null
+    imageSize: window.innerWidth,   // 画像サイズ（１倍時）px
+    imageX: 0,                      // 画像表示X原点
+    imageY: 0,                      // 画像表示Y原点
+    imageScale: 1,                  // 画像表示倍率
+    tapEnabled: false,              // iOSのSafariでd3のclickが来ないのでtouchend代用するためのもの
+    userParam: {                    // ユーザパラメータ（Twitter認証時に取得）
+        uid: null,  // firebaseのuid
+        id: null,   // twitterユーザーID
+        name: null, // twitter表示名
+        icon: null  // twitterアイコン
     },
-    dbRefPath: "ettan2017/",
-    userNameFontSize: 1.0, // 画像上ユーザー名のフォントサイズ係数（大きいほど大きくなる）
+    dbRefPath: "ettan2017/",        // firebaseのDBのパス
+    userNameFontSize: 1.0,          // 画像上ユーザー名のフォントサイズ係数（大きいほど大きくなる）
 
+    // 初期化（ここからスタート）
     init: function () {
         window.onload = function() {
             this.didLoad();
         }.bind(this);
     },
 
+    // html読み込み完了
     didLoad: function() {
         // iOS10 の Safari で user-scalable=no が効かなくなったことへの対処
         this.fxxkinApple();
@@ -94,9 +96,10 @@ var ettan2017 = {
         // 表示（フェードイン）
         this.fadeIn();
 
-        // はじめる
+        // 説明画面の「はじめる」ボタン
         var startButton = document.getElementById("start");
         startButton.addEventListener('click', function (event) {
+            // 説明画面を消す
             var description = document.getElementById("description");
             description.style.pointerEvents = "none";
             description.style.opacity = 0;
@@ -104,20 +107,27 @@ var ettan2017 = {
         }.bind(this));
     },
 
+    // ウィンドウサイズ変更時
     onResize: function() {
         this.imageSize = window.innerWidth;
     },
 
+    // d3でのパン・ピンチによる画像拡大縮小移動
     onZoom: function() {
         this.setImagePosition(d3.event.translate[0], d3.event.translate[1], d3.event.scale);            
     },
 
+    // 画像上クリック時
     onClick: function(x, y) {
         if(this.userParam.uid){
+            // クリック位置を正規化
             var posX = (x - this.imageX) / (this.imageSize * this.imageScale);
             var posY = (y - this.imageY) / (this.imageSize * this.imageScale);
 
+            // 既存のユーザー名とアイコンがあれば削除
             this.removeUserTag(this.userParam.uid);
+
+            // 新しいユーザー名とアイコンを追加
             this.addUserTag(this.userParam.uid, this.userParam.icon, this.userParam.name, this.userParam.id, posX, posY);
 
             // firebaseのDBに書き込み
@@ -131,7 +141,9 @@ var ettan2017 = {
         }
     },
     
+    // imageContainerに新しいユーザー名とアイコンを追加
     addUserTag: function(uid, icon, name, id, x, y){
+        // ユーザー名
         var userName = document.createElement("div");
         userName.className = "userName";
         userName.id = uid;
@@ -139,6 +151,7 @@ var ettan2017 = {
         userName.style.left = x * 100 + "%";
         userName.style.top = y * 100 + "%";
 
+        // アイコン
         var userIcon = document.createElement("img");
         userIcon.className = "userIcon";
         userIcon.id = uid;
@@ -147,16 +160,19 @@ var ettan2017 = {
         userIcon.style.right = (1 - x) * 100 + "%";
         userIcon.style.top = y * 100 + "%";
         userIcon.addEventListener('click', function (event) {
+            // アイコンクリックでTwitterページ表示
             event.stopPropagation(); // 下にclickイベントが行かないように
             var twitterId = event.currentTarget.alt;
             window.open("https://twitter.com/" + twitterId);
         }.bind(this));
 
+        // imageContainerに追加
         var imageContainer = document.getElementById("imageContainer");
         imageContainer.appendChild(userIcon);
         imageContainer.appendChild(userName);
     },
 
+    // imageContainerから uid に該当するユーザー名とアイコンを削除
     removeUserTag: function(uid){
         var element = document.getElementById(uid);
         if(element){
@@ -165,6 +181,7 @@ var ettan2017 = {
         }
     },
 
+    // 画像表示位置の設定
     setImagePosition: function(x, y, scale) {
         this.imageX = x;
         this.imageY = y;
@@ -172,6 +189,7 @@ var ettan2017 = {
         this.updateImagePosition();
     },
 
+    // 画像表示位置の更新
     updateImagePosition: function() {
         var imageContainer = document.getElementById("imageContainer");
         imageContainer.style.left = this.imageX / this.imageSize * 100 + "vw";
@@ -181,6 +199,7 @@ var ettan2017 = {
         imageContainer.style.fontSize = this.imageScale * this.userNameFontSize + "vw";
     },
 
+    // ログイン
     onLogin: function() {
         this.fadeOut();
 
@@ -204,6 +223,7 @@ var ettan2017 = {
         }.bind(this));
     },
 
+    // ログイン成功時
     didLogin: function() {
         document.getElementById("login").style.display = "none";
         document.getElementById("logout").style.display = "inline";
@@ -214,6 +234,7 @@ var ettan2017 = {
         document.getElementById("name").innerText = this.userParam.name;
     },
 
+    // ログアウト
     onLogout: function() {
         this.fadeOut();
         firebase.auth().signOut().then(function() {
@@ -225,6 +246,7 @@ var ettan2017 = {
         }.bind(this));
     },
 
+    // ログアウト成功時
     didLogout: function() {
         document.getElementById("login").style.display = "inline";
         document.getElementById("logout").style.display = "none";
@@ -236,15 +258,18 @@ var ettan2017 = {
         document.getElementById("name").innerText = "";
     },
         
+    // メイン画面のフェードイン（処理中くるくるの消去）
     fadeIn: function() {
         document.body.style.opacity = 1;
         document.getElementById("progress").style.opacity = 0;
     },
     
+    // メイン画面のフェードアウト（処理中くるくるの表示）
     fadeOut: function() {
         document.getElementById("progress").style.opacity = 0.7;
     },
     
+    // iOSのSafariのための処理
     fxxkinApple() {
         // ブラウザ自身でのピンチ・ドラッグ操作を禁止する
         document.addEventListener('touchstart', function (e){
