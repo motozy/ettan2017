@@ -9,8 +9,12 @@ var ettan2017 = {
     tapEnabled: false,
     loginButton: null,
     logoutButton: null,
-    userParam: null,
-    
+    userParam: {
+        uid: null,
+        id: null,
+        name: null,
+        icon: null
+    },
     init: function () {
         window.onload = function() {
             this.didLoad();
@@ -83,7 +87,7 @@ var ettan2017 = {
     },
 
     onClick: function(x, y) {
-        if(this.userParam){
+        if(this.userParam.uid){
             var posX = (x - this.imageX) / (this.viewWidth * this.imageScale);
             var posY = (y - this.imageY) / (this.viewWidth * this.imageScale);
 
@@ -146,13 +150,12 @@ var ettan2017 = {
             'lang': 'ja'
         });
         firebase.auth().signInWithPopup(provider).then(function(result) {
-            var param = {
-                id: result.additionalUserInfo.username,
-                name: result.user.displayName,
-                icon: result.user.photoURL,
-                uid: result.user.uid
-            };
-            this.didLogin(param);
+            this.userParam.id = result.additionalUserInfo.username;
+            this.userParam.name = result.user.displayName;
+            this.userParam.icon = result.user.photoURL;
+            this.userParam.uid = result.user.uid;
+
+            this.didLogin();
             this.fadeIn();
         }.bind(this)).catch(function(error) {
             window.alert("ログインに失敗しました");
@@ -160,10 +163,9 @@ var ettan2017 = {
         }.bind(this));
     },
 
-    didLogin: function(param) {
+    didLogin: function() {
         this.loginButton.style.display = "none";
         this.logoutButton.style.display = "inline";
-        this.userParam = param;
 
         document.getElementById("icon").src = this.userParam.icon;
         document.getElementById("name").innerText = this.userParam.name;
