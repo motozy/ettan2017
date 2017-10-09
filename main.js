@@ -169,7 +169,9 @@ var ettan2017 = {
         this.loginButton.style.display = "none";
         this.logoutButton.style.display = "inline";
 
-        document.getElementById("icon").src = this.userParam.icon;
+        var icon = document.getElementById("icon")
+        icon.src = this.userParam.icon;
+        icon.hidden = false;
         document.getElementById("name").innerText = this.userParam.name;
              /*
         database: firebase.database(),
@@ -195,8 +197,11 @@ var ettan2017 = {
     didLogout: function() {
         this.loginButton.style.display = "inline";
         this.logoutButton.style.display = "none";
-        document.getElementById("icon").src = "";
         this.userParam.uid = null;
+
+        var icon = document.getElementById("icon")
+        icon.src = "";
+        icon.hidden = true;
         document.getElementById("name").innerText = "";
     },
         
