@@ -178,10 +178,11 @@ var ettan2017 = {
         userIcon.style.right = (1 - x) * 100 + "%";
         userIcon.style.top = y * 100 + "%";
         userIcon.addEventListener('click', function (event) {
-            // アイコンクリックでTwitterページ表示
-            event.stopPropagation(); // 下にclickイベントが行かないように
-            var twitterId = event.currentTarget.alt;
-            window.open("https://twitter.com/" + twitterId);
+            // ログイン中でなければアイコンクリックでTwitterページ表示（ログイン中＝編集中の誤操作防止）
+            if(!this.userParam.uid){
+                event.stopPropagation(); // 下にclickイベントが行かないように
+                this.openTwitter(event.currentTarget.alt);
+            }
         }.bind(this));
 
         // imageContainerに追加
@@ -190,6 +191,11 @@ var ettan2017 = {
         imageContainer.appendChild(userName);
     },
 
+    // Twitterページ表示
+    openTwitter: function(twitterId){
+        window.open("https://twitter.com/" + twitterId);
+    },
+        
     // imageContainerから uid に該当するユーザー名とアイコンを削除
     removeUserTag: function(uid){
         var element = document.getElementById(uid);
