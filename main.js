@@ -98,7 +98,7 @@ var ettan2017 = {
         }.bind(this));
 
         // ログアウト状態からスタート
-        this.onLogout();
+        this.didLogout();
 
         // 表示（フェードイン）
         this.fadeIn();
