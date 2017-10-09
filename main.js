@@ -71,7 +71,7 @@ var ettan2017 = {
         this.onLogout();
 
         // 表示（フェードイン）
-        document.body.style.opacity = 1;
+        this.fadeIn();
     },
 
     onResize: function() {
@@ -137,6 +137,8 @@ var ettan2017 = {
     },
 
     onLogin: function() {
+        this.fadeOut();
+
         // JavaScript で Twitter を使用して認証する
         // 参照→ https://firebase.google.com/docs/auth/web/twitter-login
         var provider = new firebase.auth.TwitterAuthProvider();
@@ -151,8 +153,10 @@ var ettan2017 = {
                 uid: result.user.uid
             };
             this.didLogin(param);
+            this.fadeIn();
         }.bind(this)).catch(function(error) {
             window.alert("ログインに失敗しました");
+            this.fadeIn();
         }.bind(this));
     },
 
@@ -174,11 +178,13 @@ var ettan2017 = {
     },
 
     onLogout: function() {
+        this.fadeOut();
         firebase.auth().signOut().then(function() {
-            // Sign-out successful.
             this.didLogout();
+            this.fadeIn();
         }.bind(this)).catch(function(error) {
-            // An error happened.
+            window.alert("ログアウトに失敗しました");
+            this.fadeIn();
         }.bind(this));
     },
 
@@ -190,6 +196,15 @@ var ettan2017 = {
         document.getElementById("name").innerText = "";
     },
         
+    fadeIn: function() {
+        document.body.style.opacity = 1;
+        document.getElementById("progress").style.opacity = 0;
+    },
+    
+    fadeOut: function() {
+        document.getElementById("progress").style.opacity = 0.7;
+    },
+    
     fxxkinApple() {
         // ブラウザ自身でのピンチ・ドラッグ操作を禁止する
         document.addEventListener('touchstart', function (e){
