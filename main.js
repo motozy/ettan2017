@@ -7,6 +7,9 @@ var ettan2017 = {
     imageY: 0,
     imageScale: 1,
     tapEnabled: false,
+    loginButton: null,
+    logoutButton: null,
+    userParam: null,
     
     init: function () {
         window.onload = function() {
@@ -15,18 +18,29 @@ var ettan2017 = {
     },
 
     didLoad: function() {
+        // iOS10 の Safari で user-scalable=no が効かなくなったことへの対処
         this.fxxkinApple();
 
-        var login = document.getElementById("login");
-        login.addEventListener('click', function (event) {
+        // ログインボタン
+        this.loginButton = document.getElementById("login");
+        this.loginButton.addEventListener('click', function (event) {
             event.stopPropagation(); // 下にclickイベントが行かないように
             this.onLogin();
         }.bind(this));
+
+        // ログアウトボタン
+        this.logoutButton = document.getElementById("logout");
+        this.logoutButton.addEventListener('click', function (event) {
+            event.stopPropagation(); // 下にclickイベントが行かないように
+            this.onLogout();
+        }.bind(this));
         
+        // リサイズ時処理
         window.addEventListener('resize', function (event) {
             this.onResize();
         }.bind(this));
 
+        // ズーム（ピンチ・パン）処理
         var zoom = d3.behavior.zoom();
         zoom.scale(1);
         zoom.scaleExtent([1, 10]);
@@ -35,6 +49,7 @@ var ettan2017 = {
             this.onZoom();
         }.bind(this));
             
+        // クリック・タップ時の処理
         var body = d3.select("body");
         body.call(zoom)
         body.on("click", function() {
@@ -49,7 +64,14 @@ var ettan2017 = {
             }
         }.bind(this));
 
+        // 画像表示初期化
         this.setImagePosition(0, 0, 1);
+
+        // ログアウト状態からスタート
+        this.onLogout();
+
+        // 表示（フェードイン）
+        document.body.style.opacity = 1;
     },
 
     onResize: function() {
@@ -61,16 +83,41 @@ var ettan2017 = {
     },
 
     onClick: function(x, y) {
-        var nameTag = document.createElement("div");
-        nameTag.className = "nameTag";
-        nameTag.innerText = "えったん";
-        nameTag.style.left = (x - this.imageX) / (this.viewWidth * this.imageScale) * 100 + "%";
-        nameTag.style.top = (y - this.imageY) / (this.viewWidth * this.imageScale) * 100 + "%";
+        if(this.userParam){
+            var posX = (x - this.imageX) / (this.viewWidth * this.imageScale);
+            var posY = (y - this.imageY) / (this.viewWidth * this.imageScale);
+
+            this.removeUserTag(this.userParam.uid);
+            this.addUserTag(this.userParam.uid, this.userParam.icon, this.userParam.name, posX, posY);
+        }
+    },
+    
+    addUserTag: function(uid, icon, name, x, y){
+        var userName = document.createElement("div");
+        userName.className = "userName";
+        userName.id = uid;
+        userName.innerText = name;
+        userName.style.left = x * 100 + "%";
+        userName.style.top = y * 100 + "%";
+
+        var userIcon = document.createElement("img");
+        userIcon.className = "userIcon";
+        userIcon.id = uid;
+        userIcon.src = icon;
+        userIcon.style.right = (1 - x) * 100 + "%";
+        userIcon.style.top = y * 100 + "%";
 
         var imageContainer = document.getElementById("imageContainer");
-        imageContainer.appendChild(nameTag);
+        imageContainer.appendChild(userIcon);
+        imageContainer.appendChild(userName);
+    },
 
-        console.log("clicked!", d3.event);
+    removeUserTag: function(uid){
+        var element = document.getElementById(uid);
+        if(element){
+            element.parentNode.removeChild(element);
+            this.removeUserTag(uid);
+        }
     },
 
     setImagePosition: function(x, y, scale) {
@@ -90,34 +137,68 @@ var ettan2017 = {
     },
 
     onLogin: function() {
+        // JavaScript で Twitter を使用して認証する
+        // 参照→ https://firebase.google.com/docs/auth/web/twitter-login
         var provider = new firebase.auth.TwitterAuthProvider();
         provider.setCustomParameters({
             'lang': 'ja'
         });
         firebase.auth().signInWithPopup(provider).then(function(result) {
-            // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
-            // You can use these server side with your app's credentials to access the Twitter API.
-            var token = result.credential.accessToken;
-            var secret = result.credential.secret;
-            // The signed-in user info.
-            var user = result.user;
-            // ...
-        }).catch(function(error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            // The email of the user's account used.
-            var email = error.email;
-            // The firebase.auth.AuthCredential type that was used.
-            var credential = error.credential;
-            // ...
-        });
+            var param = {
+                id: result.additionalUserInfo.username,
+                name: result.user.displayName,
+                icon: result.user.photoURL,
+                uid: result.user.uid
+            };
+            this.didLogin(param);
+        }.bind(this)).catch(function(error) {
+            window.alert("ログインに失敗しました");
+        }.bind(this));
     },
 
+    didLogin: function(param) {
+        this.loginButton.style.display = "none";
+        this.logoutButton.style.display = "inline";
+        this.userParam = param;
+
+        document.getElementById("icon").src = this.userParam.icon;
+        document.getElementById("name").innerText = this.userParam.name;
+             /*
+        database: firebase.database(),
+        firebase.database().ref('users/' + userId).set({
+            username: name,
+            email: email,
+            profile_picture : imageUrl
+        });
+        */
+    },
+
+    onLogout: function() {
+        firebase.auth().signOut().then(function() {
+            // Sign-out successful.
+            this.didLogout();
+        }.bind(this)).catch(function(error) {
+            // An error happened.
+        }.bind(this));
+    },
+
+    didLogout: function() {
+        this.loginButton.style.display = "inline";
+        this.logoutButton.style.display = "none";
+        this.userParam = null;
+        document.getElementById("icon").src = "";
+        document.getElementById("name").innerText = "";
+    },
+        
     fxxkinApple() {
         // ブラウザ自身でのピンチ・ドラッグ操作を禁止する
-        document.addEventListener('touchstart', event => {
-                event.preventDefault();
+        document.addEventListener('touchstart', function (e){
+            if (e.target.nodeName !== "INPUT") {
+                e.preventDefault();
+            }
+        }, true);
+        document.addEventListener('touchmove', function (e){
+            e.preventDefault();
         }, true);
     }
 }
