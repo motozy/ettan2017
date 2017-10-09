@@ -2,7 +2,7 @@
 "use strict";
 
 var ettan2017 = {
-    viewWidth: window.innerWidth,
+    imageSize: window.innerWidth,
     imageX: 0,
     imageY: 0,
     imageScale: 1,
@@ -81,7 +81,7 @@ var ettan2017 = {
     },
 
     onResize: function() {
-        this.viewWidth = window.innerWidth;
+        this.imageSize = window.innerWidth;
     },
 
     onZoom: function() {
@@ -90,8 +90,8 @@ var ettan2017 = {
 
     onClick: function(x, y) {
         if(this.userParam.uid){
-            var posX = (x - this.imageX) / (this.viewWidth * this.imageScale);
-            var posY = (y - this.imageY) / (this.viewWidth * this.imageScale);
+            var posX = (x - this.imageX) / (this.imageSize * this.imageScale);
+            var posY = (y - this.imageY) / (this.imageSize * this.imageScale);
 
             this.removeUserTag(this.userParam.uid);
             this.addUserTag(this.userParam.uid, this.userParam.icon, this.userParam.name, posX, posY);
@@ -135,8 +135,8 @@ var ettan2017 = {
 
     updateImagePosition: function() {
         var imageContainer = document.getElementById("imageContainer");
-        imageContainer.style.left = this.imageX / this.viewWidth * 100 + "vw";
-        imageContainer.style.top = this.imageY / this.viewWidth * 100 + "vw";
+        imageContainer.style.left = this.imageX / this.imageSize * 100 + "vw";
+        imageContainer.style.top = this.imageY / this.imageSize * 100 + "vw";
         imageContainer.style.width = this.imageScale * 100 + "vw";
         imageContainer.style.height = this.imageScale * 100 + "vw";
         imageContainer.style.fontSize = this.imageScale * this.userNameFontSize + "vw";
