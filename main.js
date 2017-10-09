@@ -195,8 +195,8 @@ var ettan2017 = {
     didLogout: function() {
         this.loginButton.style.display = "inline";
         this.logoutButton.style.display = "none";
-        this.userParam = null;
         document.getElementById("icon").src = "";
+        this.userParam.uid = null;
         document.getElementById("name").innerText = "";
     },
         
