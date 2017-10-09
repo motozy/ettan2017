@@ -15,6 +15,8 @@ var ettan2017 = {
         name: null,
         icon: null
     },
+    userNameFontSize: 1.0, // 画像上ユーザー名のフォントサイズ係数（大きいほど大きくなる）
+
     init: function () {
         window.onload = function() {
             this.didLoad();
@@ -137,7 +139,7 @@ var ettan2017 = {
         imageContainer.style.top = this.imageY / this.viewWidth * 100 + "vw";
         imageContainer.style.width = this.imageScale * 100 + "vw";
         imageContainer.style.height = this.imageScale * 100 + "vw";
-        imageContainer.style.fontSize = this.imageScale * 0.6 + "vw";
+        imageContainer.style.fontSize = this.imageScale * this.userNameFontSize + "vw";
     },
 
     onLogin: function() {
