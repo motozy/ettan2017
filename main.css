@@ -12,7 +12,7 @@ body {
 }
     
 #controlPanel{
-    position: absolute;
+    position: fixed;
     display: inline-block;
     z-index: 1;
     left: 0px;
