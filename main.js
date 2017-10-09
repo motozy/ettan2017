@@ -90,11 +90,13 @@ var ettan2017 = {
         // firebaseのDBから読み取り
         firebase.database().ref(this.dbRefPath).once('value').then(function(snapshot) {
             var obj = snapshot.val();
-            Object.keys(obj).forEach(function (uid) {
-                // ユーザー名の表示
-                var param = obj[uid];
-                this.addUserTag(uid, param.icon, param.name, param.id, param.x, param.y);
-            }.bind(this));
+            if(obj){
+                Object.keys(obj).forEach(function (uid) {
+                    // ユーザー名の表示
+                    var param = obj[uid];
+                    this.addUserTag(uid, param.icon, param.name, param.id, param.x, param.y);
+                }.bind(this));
+            }
         }.bind(this));
 
         // ログアウト状態からスタート
