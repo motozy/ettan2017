@@ -49,6 +49,8 @@ body {
     color: rgb(75, 88, 88);
     background-color: rgba(255, 255, 255, 0.9);
     transition: opacity 0.3s ease-in-out;
+    opacity: 0;
+    pointer-events: none;
 }
 
 #description h1, #description h2, #description p{

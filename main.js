@@ -25,6 +25,8 @@ var ettan2017 = {
 
     // html読み込み完了
     didLoad: function() {
+        this.fadeOut();
+
         // iOS10 の Safari で user-scalable=no が効かなくなったことへの対処
         this.fxxkinApple();
 
@@ -99,20 +101,37 @@ var ettan2017 = {
             }
         }.bind(this));
 
-        // ログアウト状態からスタート
-        this.didLogout();
+        // ログインページにリダイレクトしてログインを行った場合の結果を取得
+        firebase.auth().getRedirectResult().then(function(result) {
+            // ログイン成功・ユーザパラメータを設定
+            this.didLogin();
+            this.userParam.id = result.additionalUserInfo.username;
+            this.userParam.name = result.user.displayName;
+            this.userParam.icon = result.user.photoURL;
+            this.userParam.uid = result.user.uid;
 
-        // 表示（フェードイン）
-        this.fadeIn();
-
-        // 説明画面の「はじめる」ボタン
-        var startButton = document.getElementById("start");
-        startButton.addEventListener('click', function (event) {
-            // 説明画面を消す
+            // 表示（フェードイン）
+            this.fadeIn();
+        }.bind(this)).catch(function(error) {
+            // ログイン失敗またはログアウト状態
+            this.didLogout();
+        
+            // 説明画面を表示
             var description = document.getElementById("description");
-            description.style.pointerEvents = "none";
-            description.style.opacity = 0;
-            return false;
+            description.style.pointerEvents = "auto";
+            description.style.opacity = 1;
+
+            // 説明画面の「はじめる」ボタン
+            var startButton = document.getElementById("start");
+            startButton.addEventListener('click', function (event) {
+                // はじめるを押したら説明画面を消す
+                description.style.pointerEvents = "none";
+                description.style.opacity = 0;
+                return false;
+            }.bind(this));
+
+            // 表示（フェードイン）
+            this.fadeIn();
         }.bind(this));
     },
 
@@ -227,27 +246,15 @@ var ettan2017 = {
 
     // ログイン
     onLogin: function() {
-        this.fadeOut();
-
         // JavaScript で Twitter を使用して認証する
         // 参照→ https://firebase.google.com/docs/auth/web/twitter-login
         var provider = new firebase.auth.TwitterAuthProvider();
         provider.setCustomParameters({
             'lang': 'ja'
         });
-        firebase.auth().signInWithPopup(provider).then(function(result) {
-            // サインイン成功・ユーザパラメータを設定
-            this.userParam.id = result.additionalUserInfo.username;
-            this.userParam.name = result.user.displayName;
-            this.userParam.icon = result.user.photoURL;
-            this.userParam.uid = result.user.uid;
 
-            this.didLogin();
-            this.fadeIn();
-        }.bind(this)).catch(function(error) {
-            window.alert("ログインに失敗しました");
-            this.fadeIn();
-        }.bind(this));
+        // ログインページにリダイレクトしてログインを行う
+        firebase.auth().signInWithRedirect(provider);
     },
 
     // ログイン成功時
@@ -300,6 +307,7 @@ var ettan2017 = {
     
     // メイン画面のフェードアウト（処理中くるくるの表示）
     fadeOut: function() {
+        document.body.style.opacity = 1;
         document.getElementById("progress").style.opacity = 0.7;
     },
     
