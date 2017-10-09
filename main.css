@@ -10,10 +10,11 @@ body {
     opacity: 0;
     transition: opacity 0.3s ease-in;
 }
-    
+
+/*---- くるくる ----*/
 #progress{
 	position: fixed;
-    z-index: 2;
+    z-index: 3;
 	left: 0%;
     top: 0%;
 	width: 100%;
@@ -35,6 +36,51 @@ body {
     padding: 0;
 }
   
+/*---- 説明画面 ----*/
+#description{
+    position: absolute;
+    overflow: auto;
+    z-index: 2;
+	left: 0%;
+    top: 0%;
+	width: 100%;
+	height: 100%;
+    text-align: center;
+    color: rgb(75, 88, 88);
+    background-color: rgba(255, 255, 255, 0.9);
+    transition: opacity 0.3s ease-in-out;
+}
+
+#description h1, #description h2, #description p{
+    font-family: sans-serif;
+}
+#description h1{
+    font-size: 18pt;
+    font-weight: bold;
+    margin: 0.5em 0 0.3em;
+}
+#description h2{
+    font-size: 14pt;
+    font-weight: bold;
+    margin: 0.5em 0 0.2em;
+}
+#description p{
+    font-size: 10pt;
+    margin: 0.2em 0;
+}
+#start{
+    font-size: 14pt;
+    margin: 0.7em 0;
+    padding: 0.2em 2em;
+    text-decoration: none;
+    border: none;
+    border-radius: 3px;
+    color: white;
+    background-color: #ffd060;
+    box-shadow: 0px 0px 15px -1px #b9ebff;
+}    
+
+/*---- ログイン・ログアウトボタンとか ----*/
 #controlPanel{
     position: fixed;
     display: inline-block;
@@ -79,6 +125,7 @@ body {
     text-shadow: 0px 0px 10px white;
 }
 
+/*---- 画像表示部分 ----*/
 #imageContainer {
     position: absolute;
     z-index: 0;

@@ -78,6 +78,15 @@ var ettan2017 = {
 
         // 表示（フェードイン）
         this.fadeIn();
+
+        // はじめる
+        var startButton = document.getElementById("start");
+        startButton.addEventListener('click', function (event) {
+            var description = document.getElementById("description");
+            description.style.pointerEvents = "none";
+            description.style.opacity = 0;
+            return false;
+        }.bind(this));
     },
 
     onResize: function() {
