@@ -7,8 +7,6 @@ var ettan2017 = {
     imageY: 0,
     imageScale: 1,
     tapEnabled: false, // iOSのSafariでd3のclickが来ないのでtouchend代用するためのもの
-    loginButton: null,
-    logoutButton: null,
     userParam: {
         uid: null,
         id: null,
@@ -29,16 +27,14 @@ var ettan2017 = {
         this.fxxkinApple();
 
         // ログインボタン
-        this.loginButton = document.getElementById("login");
-        this.loginButton.addEventListener('click', function (event) {
+        document.getElementById("login").addEventListener('click', function (event) {
             event.stopPropagation(); // 下にclickイベントが行かないように
             this.tapEnabled = false;
             this.onLogin();
         }.bind(this));
 
         // ログアウトボタン
-        this.logoutButton = document.getElementById("logout");
-        this.logoutButton.addEventListener('click', function (event) {
+        document.getElementById("logout").addEventListener('click', function (event) {
             event.stopPropagation(); // 下にclickイベントが行かないように
             this.tapEnabled = false;
             this.onLogout();
@@ -209,8 +205,8 @@ var ettan2017 = {
     },
 
     didLogin: function() {
-        this.loginButton.style.display = "none";
-        this.logoutButton.style.display = "inline";
+        document.getElementById("login").style.display = "none";
+        document.getElementById("logout").style.display = "inline";
 
         var icon = document.getElementById("icon")
         icon.src = this.userParam.icon;
@@ -230,8 +226,8 @@ var ettan2017 = {
     },
 
     didLogout: function() {
-        this.loginButton.style.display = "inline";
-        this.logoutButton.style.display = "none";
+        document.getElementById("login").style.display = "inline";
+        document.getElementById("logout").style.display = "none";
         this.userParam.uid = null;
 
         var icon = document.getElementById("icon")
