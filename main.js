@@ -6,7 +6,7 @@ var ettan2017 = {
     imageX: 0,
     imageY: 0,
     imageScale: 1,
-    tapEnabled: false,
+    tapEnabled: false, // iOSのSafariでd3のclickが来ないのでtouchend代用するためのもの
     loginButton: null,
     logoutButton: null,
     userParam: {
@@ -31,6 +31,7 @@ var ettan2017 = {
         this.loginButton = document.getElementById("login");
         this.loginButton.addEventListener('click', function (event) {
             event.stopPropagation(); // 下にclickイベントが行かないように
+            this.tapEnabled = false;
             this.onLogin();
         }.bind(this));
 
@@ -38,6 +39,7 @@ var ettan2017 = {
         this.logoutButton = document.getElementById("logout");
         this.logoutButton.addEventListener('click', function (event) {
             event.stopPropagation(); // 下にclickイベントが行かないように
+            this.tapEnabled = false;
             this.onLogout();
         }.bind(this));
         
@@ -49,6 +51,7 @@ var ettan2017 = {
         // ズーム（ピンチ・パン）処理
         var zoom = d3.behavior.zoom();
         zoom.scale(1);
+        //zoom.translate([translate])
         zoom.scaleExtent([1, 10]);
         zoom.on("zoom", function() {
             this.tapEnabled = false;
@@ -59,15 +62,20 @@ var ettan2017 = {
         var body = d3.select("body");
         body.call(zoom)
         body.on("click", function() {
+            this.tapEnabled = false;
             this.onClick(d3.event.clientX, d3.event.clientY);
         }.bind(this));
         body.on("touchstart", function() {
             this.tapEnabled = true;
         }.bind(this));
         body.on("touchend", function() {
-            if(this.tapEnabled){
-                this.onClick(d3.event.pageX, d3.event.pageY);
-            }
+            var pageX = d3.event.pageX;
+            var pageY = d3.event.pageY
+            setTimeout(function() {
+                if(this.tapEnabled){
+                    this.onClick(pageX, pageY);
+                }
+            }.bind(this), 200); // iOSのSafariでボタンクリックより先にtouchendが来るのを回避するためタイマを使う
         }.bind(this));
 
         // 画像表示初期化
