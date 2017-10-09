@@ -15,6 +15,7 @@ var ettan2017 = {
         name: null,
         icon: null
     },
+    dbRefPath: "ettan2017/",
     userNameFontSize: 1.0, // 画像上ユーザー名のフォントサイズ係数（大きいほど大きくなる）
 
     init: function () {
@@ -81,6 +82,16 @@ var ettan2017 = {
         // 画像表示初期化
         this.setImagePosition(0, 0, 1);
 
+        // firebaseのDBから読み取り
+        firebase.database().ref(this.dbRefPath).once('value').then(function(snapshot) {
+            var obj = snapshot.val();
+            Object.keys(obj).forEach(function (uid) {
+                // ユーザー名の表示
+                var param = obj[uid];
+                this.addUserTag(uid, param.icon, param.name, param.id, param.x, param.y);
+            }.bind(this));
+        }.bind(this));
+
         // ログアウト状態からスタート
         this.onLogout();
 
@@ -111,11 +122,20 @@ var ettan2017 = {
             var posY = (y - this.imageY) / (this.imageSize * this.imageScale);
 
             this.removeUserTag(this.userParam.uid);
-            this.addUserTag(this.userParam.uid, this.userParam.icon, this.userParam.name, posX, posY);
+            this.addUserTag(this.userParam.uid, this.userParam.icon, this.userParam.name, this.userParam.id, posX, posY);
+
+            // firebaseのDBに書き込み
+            firebase.database().ref(this.dbRefPath + this.userParam.uid).set({
+                id: this.userParam.id,
+                name: this.userParam.name,
+                icon : this.userParam.icon,
+                x: posX,
+                y: posY
+            });
         }
     },
     
-    addUserTag: function(uid, icon, name, x, y){
+    addUserTag: function(uid, icon, name, id, x, y){
         var userName = document.createElement("div");
         userName.className = "userName";
         userName.id = uid;
@@ -127,8 +147,14 @@ var ettan2017 = {
         userIcon.className = "userIcon";
         userIcon.id = uid;
         userIcon.src = icon;
+        userIcon.alt = id;
         userIcon.style.right = (1 - x) * 100 + "%";
         userIcon.style.top = y * 100 + "%";
+        userIcon.addEventListener('click', function (event) {
+            event.stopPropagation(); // 下にclickイベントが行かないように
+            var twitterId = event.currentTarget.alt;
+            window.open("https://twitter.com/" + twitterId);
+        }.bind(this));
 
         var imageContainer = document.getElementById("imageContainer");
         imageContainer.appendChild(userIcon);
@@ -190,14 +216,6 @@ var ettan2017 = {
         icon.src = this.userParam.icon;
         icon.hidden = false;
         document.getElementById("name").innerText = this.userParam.name;
-             /*
-        database: firebase.database(),
-        firebase.database().ref('users/' + userId).set({
-            username: name,
-            email: email,
-            profile_picture : imageUrl
-        });
-        */
     },
 
     onLogout: function() {
