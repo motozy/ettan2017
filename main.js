@@ -183,11 +183,13 @@ var ettan2017 = {
     // 削除
     onRemove: function() {
         if(this.userParam.uid){
-            // 既存のユーザー名とアイコンがあれば削除
-            this.removeUserTag(this.userParam.uid);
+            if(window.confirm("えっ？削除しますか？😣")){
+                // 既存のユーザー名とアイコンがあれば削除
+                this.removeUserTag(this.userParam.uid);
 
-            // firebaseのDBから削除
-            firebase.database().ref(this.dbRefPath + this.userParam.uid).set(null);
+                // firebaseのDBから削除
+                firebase.database().ref(this.dbRefPath + this.userParam.uid).set(null);
+            }
         }
     },
     
