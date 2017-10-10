@@ -1,6 +1,17 @@
 // twitter: @mmzy3
 "use strict";
 
+// Initialize Firebase
+var config = {
+    apiKey: "AIzaSyA8LOCns8rR3236Llz2Jab1KPZdj4sV_bo",
+    authDomain: "ettan2017-8240b.firebaseapp.com",
+    databaseURL: "https://ettan2017-8240b.firebaseio.com",
+    projectId: "ettan2017-8240b",
+    storageBucket: "",
+    messagingSenderId: "450005891534"
+};
+firebase.initializeApp(config);
+
 var ettan2017 = {
     imageSize: window.innerWidth,   // 画像サイズ（１倍時）px
     imageX: 0,                      // 画像表示X原点
