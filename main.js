@@ -13,6 +13,11 @@ var config = {
 firebase.initializeApp(config);
 
 var ettan2017 = {
+    // 定数
+    dbRefPath: "ettan2017/",        // firebaseのDBのパス
+    userNameFontSize: 1.0,          // 画像上ユーザー名のフォントサイズ係数（大きいほど大きくなる）
+
+    // 変数
     imageSize: window.innerWidth,   // 画像サイズ（１倍時）px
     imageX: 0,                      // 画像表示X原点
     imageY: 0,                      // 画像表示Y原点
@@ -24,8 +29,6 @@ var ettan2017 = {
         name: null, // twitter表示名
         icon: null  // twitterアイコン
     },
-    dbRefPath: "ettan2017/",        // firebaseのDBのパス
-    userNameFontSize: 1.0,          // 画像上ユーザー名のフォントサイズ係数（大きいほど大きくなる）
 
     // 初期化（ここからスタート）
     init: function () {
