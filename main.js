@@ -107,6 +107,7 @@ var ettan2017 = {
         firebase.database().ref(this.dbRefPath).once('value').then(function(snapshot) {
             var obj = snapshot.val();
             if(obj){
+                document.getElementById("numErenists").innerText = Object.keys(obj).length; // 人数の表示
                 Object.keys(obj).forEach(function (uid) {
                     // ユーザー名の表示
                     var param = obj[uid];
