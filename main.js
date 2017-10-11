@@ -119,12 +119,12 @@ var ettan2017 = {
         // ログインページにリダイレクトしてログインを行った場合の結果を取得
         firebase.auth().getRedirectResult().then(function(result) {
             // ログイン成功・ユーザパラメータを設定
-            this.didLogin();
             this.userParam.id = result.additionalUserInfo.username;
             this.userParam.name = result.user.displayName;
             this.userParam.icon = result.user.photoURL;
             this.userParam.uid = result.user.uid;
-
+            this.didLogin();
+            
             // 表示（フェードイン）
             this.fadeIn();
         }.bind(this)).catch(function(error) {
