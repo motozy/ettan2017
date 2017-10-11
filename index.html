@@ -15,7 +15,9 @@
 <div id="description">
     <h1>えっ誕2017 - 俺はここだ！</h1>
     <p>えっ誕2017の集合写真で自分の場所に印をつけて、俺はここだ！と✨主張✨しよう！😊（現在<b><span id="numErenists">…</span></b>名）</p>
-    <input id="start" type="button" value="はじめる">
+    <div id="startButton">
+        <label id="start" class="button">はじめる</label>
+    </div>
     <h2>つかいかた</h2>
     <p>🌟 Twitterでログイン</p>
     <p>🌟 自分を探して✨タップ✨</p>
@@ -27,12 +29,15 @@
     <p>🌟 でも使用は自己責任で😁</p>
 </div>
 <div id="controlPanel">
-    <input id="login" type="button" value="編集👉Twitterでログイン">
-    <input id="logout" type="button" value="OK✨ログアウト">
-    <input id="remove" type="button" value="✖削除">
-    <br>
-    <img id="icon">
-    <label id="name"></label>
+    <div id="controlButton">
+        <label id="login" class="button">編集👉Twitterでログイン</label>
+        <label id="logout" class="button">OK✨ログアウト</label>
+        <label id="remove" class="button">✖削除</label>
+    </div>
+    <div id="userInfo">
+        <img id="icon">
+        <label id="name"></label>
+    </div>
 </div>
 <div id="imageContainer">
     <img id="image" src="https://pbs.twimg.com/media/DLnXAuXVAAAH0Iz.jpg:orig">
