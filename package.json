@@ -1,0 +1,23 @@
+{
+  "name": "ettan2017",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/motozy/ettan2017.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/motozy/ettan2017/issues"
+  },
+  "homepage": "https://github.com/motozy/ettan2017#readme",
+  "devDependencies": {
+    "webpack": "^3.8.1"
+  }
+}

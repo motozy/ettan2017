@@ -1,18 +1,17 @@
 // twitter: @mmzy3
 "use strict";
 
-// Initialize Firebase
-var config = {
-    apiKey: "AIzaSyA8LOCns8rR3236Llz2Jab1KPZdj4sV_bo",
-    authDomain: "ettan2017-8240b.firebaseapp.com",
-    databaseURL: "https://ettan2017-8240b.firebaseio.com",
-    projectId: "ettan2017-8240b",
-    storageBucket: "",
-    messagingSenderId: "450005891534"
-};
-firebase.initializeApp(config);
+module.exports = {
+    // Initialize Firebase
+    config: {
+        apiKey: "AIzaSyA8LOCns8rR3236Llz2Jab1KPZdj4sV_bo",
+        authDomain: "ettan2017-8240b.firebaseapp.com",
+        databaseURL: "https://ettan2017-8240b.firebaseio.com",
+        projectId: "ettan2017-8240b",
+        storageBucket: "",
+        messagingSenderId: "450005891534"
+    },
 
-var ettan2017 = {
     // 定数
     dbRefPath: "ettan2017/",        // firebaseのDBのパス
     userNameFontSize: 1.0,          // 画像上ユーザー名のフォントサイズ係数（大きいほど大きくなる）
@@ -32,6 +31,8 @@ var ettan2017 = {
 
     // 初期化（ここからスタート）
     init: function () {
+        firebase.initializeApp(this.config);
+
         window.onload = function() {
             this.didLoad();
         }.bind(this);
@@ -329,7 +330,7 @@ var ettan2017 = {
     },
     
     // iOSのSafariのための処理
-    fxxkinApple() {
+    fxxkinApple: function() {
         // ブラウザ自身でのピンチ・ドラッグ操作を禁止する
         document.addEventListener('touchstart', function (e){
             // button と userIcon 以外を禁止
@@ -341,4 +342,4 @@ var ettan2017 = {
             e.preventDefault();
         }, true);
     }
-}
+};
